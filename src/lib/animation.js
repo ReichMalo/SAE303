@@ -83,5 +83,67 @@ Animation.bounce = function (element, duration = 1, height = 100) {
   });
 };
 
+Animation.ChangeOpacity = function (element, duration = 1, opacity) {
+  gsap.to(element, {
+    opacity: opacity,
+    duration: duration,
+    yoyo: true,
+    repeat: -1,
+    ease: "power1.inOut",
+  });
+};
+
+Animation.initCanvas = function (element, zoomDuration = 0.5) {
+  gsap.to(element, {
+    scale: 1.5,
+    duration: zoomDuration,
+    ease: "power2.out",
+    transformOrigin: "center center"
+  });
+};
+
+Animation.moveCanvas = function (element, deltaX, deltaY) {
+  let current = gsap.getProperty(element, "x") || 0;
+  let currentY = gsap.getProperty(element, "y") || 0;
+  
+  gsap.to(element, {
+    x: current + deltaX,
+    y: currentY + deltaY,
+    duration: 0.05,
+    overwrite: 'auto'
+  });
+};
+
+Animation.zoomCanvas = function (element, delta, mouseX, mouseY, minScale = 0.6, maxScale = 3) {
+  let currentScale = gsap.getProperty(element, "scale") || 1;
+  let zoomFactor = 1.25;
+  
+  let newScale;
+  if (delta > 0) {
+    newScale = currentScale / zoomFactor;
+  } else {
+    newScale = currentScale * zoomFactor;
+  }
+  
+  //mettre les limite
+  newScale = Math.max(minScale, Math.min(newScale, maxScale));
+  
+  let scaleRatio = newScale / currentScale;
+  let currentX = gsap.getProperty(element, "x") || 0;
+  let currentY = gsap.getProperty(element, "y") || 0;
+  
+  let newX = mouseX - (mouseX - currentX) * scaleRatio;
+  let newY = mouseY - (mouseY - currentY) * scaleRatio;
+  
+  gsap.to(element, {
+    scale: newScale,
+    x: newX,
+    y: newY,
+    duration: 0.2,
+    ease: "power2.out",
+    transformOrigin: "0 0",
+    overwrite: 'auto'
+  });
+};
 
 export { Animation };

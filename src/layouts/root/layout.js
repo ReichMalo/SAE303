@@ -20,10 +20,22 @@ import { FooterView } from "@/ui/footer/index.js";
  * - Retourne le fragment DOM finalisé.
  */
 export function RootLayout() {
+    
     let layout = htmlToDOM(template);
-    let header = HeaderView.dom();
-    let footer = FooterView.dom();
-    layout.querySelector('slot[name="header"]').replaceWith(header);
-    layout.querySelector('slot[name="footer"]').replaceWith(footer);
+    let isPageTest = window.location.pathname.includes('pageTest');
+    
+    if (isPageTest == false) {
+        let header = HeaderView.dom();
+        let footer = FooterView.dom();
+        layout.querySelector('slot[name="header"]').replaceWith(header);
+        layout.querySelector('slot[name="footer"]').replaceWith(footer);
+    } else {
+        let headerSlot = layout.querySelector('slot[name="header"]');
+        let footerSlot = layout.querySelector('slot[name="footer"]');
+        if (headerSlot) headerSlot.remove();
+        if (footerSlot) footerSlot.remove();
+    }
+    
     return layout;
 }
+

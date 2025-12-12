@@ -2,10 +2,16 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  font-family: 'Segoe UI', 'Arial', sans-serif;
+  font-family: "Segoe UI", "Arial", sans-serif;
 }
 
 .root-main {
   flex: 1;
   padding: 2rem;
+  background-color: rgb(13, 13, 46);
+}
+
+body {
+  margin: 0;
+  padding: 0;
 }
