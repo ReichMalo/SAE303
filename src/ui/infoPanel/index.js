@@ -8,6 +8,10 @@ const InfoPanelView = {
   panelDom: null,
   canvasState: null,
   onValueChangeCallback: null,
+  callbacks: {
+    onLevelChange: null,
+    onClose: null,
+  },
   elements: {
     panel: null,
     handle: null,
@@ -42,6 +46,11 @@ const InfoPanelView = {
     }
 
     this.attachEvents();
+  },
+
+  setCallbacks: function(callbacks) {
+    if (callbacks.onLevelChange) this.callbacks.onLevelChange = callbacks.onLevelChange;
+    if (callbacks.onClose) this.callbacks.onClose = callbacks.onClose;
   },
 
   attachEvents: function () {
@@ -95,7 +104,12 @@ const InfoPanelView = {
     // Animer la position du handle
     this.updateSelectorPosition(value);
     
-    // Appeler le callback de sauvegarde
+    // Appeler le callback du composant
+    if (this.callbacks.onLevelChange) {
+      this.callbacks.onLevelChange(value);
+    }
+    
+    // Appeler le callback de sauvegarde (legacy)
     if (this.onValueChangeCallback && this.canvasState && this.canvasState.lastElementId) {
       this.onValueChangeCallback(this.canvasState.lastElementId, value);
     }
@@ -121,6 +135,11 @@ const InfoPanelView = {
     }
     if (this.elements.infoButton) this.elements.infoButton.classList.remove('hidden');
     if (this.elements.editionButton) this.elements.editionButton.classList.remove('hidden');
+    
+    // Appeler le callback du composant
+    if (this.callbacks.onClose) {
+      this.callbacks.onClose();
+    }
     
     Animation.closeInfoPanel(this.elements.panel, () => {
       this.elements.panel.classList.add('hidden');

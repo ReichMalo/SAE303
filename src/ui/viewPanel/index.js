@@ -77,6 +77,12 @@ const ViewPanelView = {
   getLevel: function () {
     return this.current_level;
   },
+
+  callbacks: {},
+
+  setCallbacks: function(callbacksObj) {
+    this.callbacks = callbacksObj || {};
+  },
 };
 
 export default ViewPanelView;
