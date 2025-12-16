@@ -22,9 +22,9 @@ import { FooterView } from "@/ui/footer/index.js";
 export function RootLayout() {
     
     let layout = htmlToDOM(template);
-    let isPageTest = window.location.pathname.includes('pageTest');
-    
-    if (isPageTest == false) {
+    let isPageSvg = window.location.pathname.includes('PageSvg');
+
+    if (isPageSvg == false) {
         let header = HeaderView.dom();
         let footer = FooterView.dom();
         layout.querySelector('slot[name="header"]').replaceWith(header);

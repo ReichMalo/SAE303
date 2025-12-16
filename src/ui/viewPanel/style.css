@@ -1,0 +1,84 @@
+.view-panel {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 320px;
+  height: 100vh;
+  background: white;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  transform: translateX(320px);
+}
+
+.view-panel.hidden {
+  pointer-events: none;
+}
+
+.view-panel__content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.view-panel__title {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0 0 16px 0;
+  color: #333;
+}
+
+.view-panel__text {
+  flex: 1;
+  margin-bottom: 20px;
+}
+
+.view-panel__text p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #666;
+  margin: 0;
+}
+
+.view-panel__level {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: #beb8f1;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.level__label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+
+.level__value {
+  font-size: 24px;
+  font-weight: bold;
+  color: #4e4cc9;
+}
+
+.view-panel__footer {
+  display: flex;
+  gap: 8px;
+}
+
+.view-panel__close {
+  flex: 1;
+  padding: 12px 16px;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.view-panel__close:hover {
+  background: #e0e0e0;
+}

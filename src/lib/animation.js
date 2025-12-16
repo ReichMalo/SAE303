@@ -83,12 +83,19 @@ Animation.bounce = function (element, duration = 1, height = 100) {
   });
 };
 
-Animation.ChangeOpacity = function (element, duration = 1, opacity) {
+Animation.ChangeOpacity = function (element, duration = 0.3) {
+  if (!element.hasAttribute('data-active')) {
+    element.setAttribute('data-active', 'false');
+  }
+  
+  const isActive = element.getAttribute('data-active') === 'true';
+  const targetOpacity = isActive ? 1 : 0;
+  
+  element.setAttribute('data-active', !isActive);
+  
   gsap.to(element, {
-    opacity: opacity,
+    opacity: targetOpacity,
     duration: duration,
-    yoyo: true,
-    repeat: -1,
     ease: "power1.inOut",
   });
 };
@@ -143,6 +150,54 @@ Animation.zoomCanvas = function (element, delta, mouseX, mouseY, minScale = 0.6,
     ease: "power2.out",
     transformOrigin: "0 0",
     overwrite: 'auto'
+  });
+};
+
+Animation.animateSelectorHandle = function (element, value, duration = 0.3) {
+  const percentage = ((value - 1) / 4) * 100;
+  
+  gsap.to(element, {
+    left: percentage + '%',
+    duration: duration,
+    ease: 'power2.inOut',
+  });
+};
+
+Animation.openInfoPanel = function (element, duration = 0.4) {
+  element.classList.remove('hidden');
+  
+  gsap.fromTo(
+    element,
+    {
+      x: 320,
+      opacity: 0,
+    },
+    {
+      x: 0,
+      opacity: 1,
+      duration: duration,
+      ease: 'power2.out',
+    }
+  );
+};
+
+Animation.setFilterOpacity = function (element, level, duration = 0.3) {
+  const opacity = 1 - ((level - 1) / 4) * 1;
+  
+  gsap.to(element, {
+    opacity: opacity,
+    duration: duration,
+    ease: "power1.inOut",
+  });
+};
+
+Animation.closeInfoPanel = function (element, onComplete, duration = 0.4) {
+  gsap.to(element, {
+    x: 320,
+    opacity: 0,
+    duration: duration,
+    ease: 'power2.in',
+    onComplete: onComplete,
   });
 };
 

@@ -9,6 +9,10 @@
 @import "./ui/footer/style.css";
 @import "./ui/spinner/style.css";
 @import "./ui/star/style.css";
+@import "./ui/infoButton/style.css";
+@import "./ui/editionButton/style.css";
+@import "./ui/infoPanel/style.css";
+@import "./ui/viewPanel/style.css";
 
 :root {
   /* Primitives Tokens */

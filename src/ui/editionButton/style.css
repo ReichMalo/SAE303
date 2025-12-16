@@ -1,0 +1,50 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.edition-buttons-wrapper {
+  display: flex;
+  align-items: center;
+  position: fixed;
+  top: 1.1rem;
+  right: 5rem;
+  z-index: 1002;
+  gap: 10px;
+}
+
+.edition-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  background: transparent;
+  border: none;
+  width: 3.125rem;
+  height: 3.125rem;
+  transition: transform 0.3s ease;
+}
+
+.edition-button:hover {
+  transform: scale(1.1);
+}
+
+.validation-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.validation-buttons.hidden {
+  display: none;
+}
+
+.edition-button svg {
+  width: 2.8rem;
+  height: 2.8rem;
+}
+
+.hidden {
+  display: none;
+}

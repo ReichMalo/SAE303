@@ -1,0 +1,27 @@
+.svg-demo1-container {
+  width: 500px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.svg-demo1-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+
+/* Edition Button Styles */
+#editionButton-container {
+  position: fixed;
+  top: 1.25rem;
+  right: 5.5rem;
+  z-index: 1002;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+#editionButton-container:hover {
+  transform: scale(1.1);
+}
