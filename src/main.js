@@ -10,7 +10,7 @@ import { PageHistoriqueViz } from "./pages/PageHistoriqueViz/page.js";
 const router = new Router("app");
 
 router.addLayout("/", RootLayout);
-router.addRoute("/", pageSvg);
+router.addRoute("/", PageHistoriqueViz);
 router.addRoute("/PageSvg", pageSvg);
 router.addRoute("/historique", PageHistoriqueViz);
 
