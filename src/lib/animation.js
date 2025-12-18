@@ -112,7 +112,7 @@ Animation.initCanvas = function (element, zoomDuration = 0.5) {
 Animation.moveCanvas = function (element, deltaX, deltaY) {
   let current = gsap.getProperty(element, "x") || 0;
   let currentY = gsap.getProperty(element, "y") || 0;
-  
+                        
   gsap.to(element, {
     x: current + deltaX,
     y: currentY + deltaY,

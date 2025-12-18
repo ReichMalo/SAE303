@@ -6,10 +6,17 @@ import ViewPanelView from "@/ui/viewPanel/index.js";
 import { htmlToDOM } from "@/lib/utils.js";
 import { Animation } from "../../lib/animation";
 import skillData from "@/data/skill.json";
+import { pn } from "@/data/export.js";
 import template from "./template.html?raw";
 
+
+//mettre dans le Mofel M
 let progressData = JSON.parse(localStorage.getItem('progressData')) || {};
 let tempProgressData = {};
+
+
+
+
 
 let C = {};
 
@@ -29,6 +36,8 @@ C.init = function() {
   return V.init();
 }
 
+
+//obtenir l'id avec le filtre (car il est le premier élément par dessus les autres)
 C.getCompetenceFromFiltre = function(filtreElement) {
   let parent = filtreElement.parentElement;
   let foundElement = null;
@@ -36,7 +45,7 @@ C.getCompetenceFromFiltre = function(filtreElement) {
   while (parent) {
     if (parent.id && !parent.id.includes('filtre')) {
       if (parent.id.includes('lvl')) {
-        V.updatePanelWithData(parent.id);
+        C.updatePanelWithData(parent.id);
         return parent.id;
       }
       if (!foundElement) {
@@ -47,45 +56,14 @@ C.getCompetenceFromFiltre = function(filtreElement) {
   }
   
   if (foundElement) {
-    V.updatePanelWithData(foundElement);
+    C.updatePanelWithData(foundElement);
     return foundElement;
   }
   
   return null;
 };
 
-C.startDrag = function(ev) {
-  let infoPanelElement = document.querySelector('.info-panel');
-  let viewPanelElement = document.querySelector('.view-panel');
-  
-  if (infoPanelElement && infoPanelElement.contains(ev.target)) return;
-  if (viewPanelElement && viewPanelElement.contains(ev.target)) return;
-  
-  canvasState.isDragging = true;
-  canvasState.startX = ev.clientX;
-  canvasState.startY = ev.clientY;
-};
-
-C.moveDrag = function(ev) {
-  if (!canvasState.isDragging || !canvasState.svg) return;
-  
-  let deltaX = ev.clientX - canvasState.startX;
-  let deltaY = ev.clientY - canvasState.startY;
-  
-  Animation.moveCanvas(canvasState.svg, deltaX, deltaY);
-  
-  canvasState.startX = ev.clientX;
-  canvasState.startY = ev.clientY;
-};
-
-C.endDrag = function(ev) {
-  canvasState.isDragging = false;
-};
-
-C.handleScroll = function(ev) {
-  Animation.zoomCanvas(canvasState.svg, ev.deltaY, ev.clientX, ev.clientY);
-};
-
+// on ajoute un élément dans les changements temporaires
 C.saveLevelProgress = function(elementId, level) {
   if (elementId) {
     tempProgressData[elementId] = level;
@@ -93,6 +71,7 @@ C.saveLevelProgress = function(elementId, level) {
   }
 };
 
+//valider les changements et les enregistrer dans le localstorage
 C.validateChanges = function() {
   for (let key in tempProgressData) {
     progressData[key] = tempProgressData[key];
@@ -102,61 +81,15 @@ C.validateChanges = function() {
   V.applyFiltersOpacity();
 };
 
+//annuler les changements temporaire, 
 C.cancelChanges = function() {
   progressData = JSON.parse(localStorage.getItem('progressData')) || {};
   tempProgressData = {};
   V.applyFiltersOpacity();
 };
 
-let V = {
-  rootPage: null,
-  svgTest: null,
-  infoPanel: null,
-  viewPanel: null
-};
-
-
-V.updatePanelWithData = function(elementId) {
-  canvasState.lastElementId = elementId;
-  
-  for (let competenceKey in skillData) {
-    let competence = skillData[competenceKey];
-    
-    if (competence.niveaux) {
-      for (let niveau of competence.niveaux) {
-        if (niveau.acs) {
-          for (let ac of niveau.acs) {
-            if (ac.code === elementId) {
-              V.fillPanelTemplate(ac.code, ac.libelle, niveau.libelle);
-              V.fillViewPanelTemplate(ac.code, ac.libelle, niveau.libelle);
-              return;
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  
-  for (let competenceKey in skillData) {
-    let competence = skillData[competenceKey];
-    
-    if (competence.niveaux) {
-      for (let niveau of competence.niveaux) {
-        let niveauId = competence.nom_court.toLowerCase() + '_lvl' + niveau.ordre;
-        
-        if (niveauId === elementId) {
-          V.fillPanelTemplate(elementId, niveau.libelle, competence.libelle_long);
-          V.fillViewPanelTemplate(elementId, niveau.libelle, competence.libelle_long);
-          return;
-        }
-      }
-    }
-  }
-};
-
-
-V.fillPanelTemplate = function(title, description) {
+// mettre ça dans le composant /!\ /!\ /!\
+C.fillPanelTemplate = function(title, description) {
   if (!V.infoPanel || !V.infoPanel.panelDom) return;
   
   let titleElement = V.infoPanel.panelDom.querySelector('.info-panel__title');
@@ -174,12 +107,12 @@ V.fillPanelTemplate = function(title, description) {
   V.infoPanel.selectValue(savedLevel);
 };
 
-
-V.fillViewPanelTemplate = function(title, description) {
+// mettre ça dans le composant /!\ /!\ /!\
+C.fillViewPanelTemplate = function(title, description) {
   if (!V.viewPanel || !V.viewPanel.panelDom) return;
   
-  const titleElement = V.viewPanel.panelDom.querySelector('.view-panel__title');
-  const descElement = V.viewPanel.panelDom.querySelector('.view-panel__text p');
+  let titleElement = V.viewPanel.panelDom.querySelector('.view-panel__title');
+  let descElement = V.viewPanel.panelDom.querySelector('.view-panel__text p');
   
   if (titleElement) {
     titleElement.textContent = title;
@@ -193,38 +126,104 @@ V.fillViewPanelTemplate = function(title, description) {
   V.viewPanel.setLevel(savedLevel);
 };
 
+C.updatePanelWithData = function(elementId) {
+  canvasState.lastElementId = elementId;
+  let isLevel = elementId.includes('_lvl');
+  
+  if (!isLevel) {
+    let acLibelle = pn.getACLibelle(elementId);
+    C.fillPanelTemplate(elementId, acLibelle);
+    C.fillViewPanelTemplate(elementId, acLibelle);
+    return;
+  }
+  
+  const levelData = pn.getLevelLibelle(elementId);
+  if (levelData) {
+    C.fillPanelTemplate(elementId, levelData.libelle, levelData.libelle_long);
+    C.fillViewPanelTemplate(elementId, levelData.libelle, levelData.libelle_long);
+  }
+};
 
+
+
+
+let V = {
+  rootPage: null,
+  svgComplet: null,
+  infoPanel: null,
+  viewPanel: null
+};
+
+// change l'opacité pour un élément (avec level en paramétre)
 V.applyPreviewOpacity = function(elementId, level) {
-  const element = canvasState.svg.querySelector(`[id="${elementId}"]`);
+  let element = canvasState.svg.querySelector(`[id="${elementId}"]`);
   if (element) {
-    const filtreElements = element.querySelectorAll('[id*="filtre"]');
+    let filtreElements = element.querySelectorAll('[id*="filtre"]'); // filtre du lien + filtre de compétence
     filtreElements.forEach(filtreElement => {
       Animation.setFilterOpacity(filtreElement, level, 0.3);
     });
   }
 };
 
-
+// opacité stocké dans le localstorage à partir de progressData 
+// /!\ demander si on met dans le C ou le V => on reste en V mais on met un paramétre (progressData) que 
+// l'on copie pour ne pas modifier directement /!\
 V.applyFiltersOpacity = function() {
   for (let elementId in progressData) {
-    const competenceElement = canvasState.svg.querySelector(`[id="${elementId}"]`);
+    let competenceElement = canvasState.svg.querySelector(`[id="${elementId}"]`);
     if (competenceElement) {
-      const filtreElements = competenceElement.querySelectorAll('[id*="filtre"]');
+      let filtreElements = competenceElement.querySelectorAll('[id*="filtre"]');
       filtreElements.forEach(filtreElement => {
-        const level = progressData[elementId] || 1;
+        let level = progressData[elementId] || 1;
         Animation.setFilterOpacity(filtreElement, level, 0);
       });
     }
   }
 };
 
+//début du drag
+V.startDrag = function(ev) {
+  let infoPanelElement = document.querySelector('.info-panel');
+  let viewPanelElement = document.querySelector('.view-panel');
+  
+  if (infoPanelElement && infoPanelElement.contains(ev.target)) return;
+  if (viewPanelElement && viewPanelElement.contains(ev.target)) return;
+  
+  canvasState.isDragging = true;
+  canvasState.startX = ev.clientX;
+  canvasState.startY = ev.clientY;
+};
+
+//drag en cours
+V.moveDrag = function(ev) {
+  if (!canvasState.isDragging || !canvasState.svg) return;
+  
+  let deltaX = ev.clientX - canvasState.startX;
+  let deltaY = ev.clientY - canvasState.startY;
+  
+  Animation.moveCanvas(canvasState.svg, deltaX, deltaY);
+  
+  canvasState.startX = ev.clientX;
+  canvasState.startY = ev.clientY;
+};
+
+//fin du drag
+V.endDrag = function(ev) {
+  canvasState.isDragging = false;
+};
+
+//zoom/dézoom
+V.handleScroll = function(ev) {
+  Animation.zoomCanvas(canvasState.svg, ev.deltaY, ev.clientX, ev.clientY);
+};
+
 V.init = function() {
-  V.svgTest = new SVGView();
+  V.svgComplet = new SVGView();
   V.rootPage = htmlToDOM(template);
   V.infoPanel = InfoPanelView;
   V.viewPanel = ViewPanelView;
   
-  const svgDom = V.svgTest.dom();
+  const svgDom = V.svgComplet.dom();
   const infoBtnDom = InfoButtonView.dom();
   const editionBtnDom = EditionButtonView.dom();
   const infoPanelDom = V.infoPanel.dom();
@@ -255,10 +254,10 @@ V.init = function() {
 
 
 V.attachEvents = function() {
-    V.rootPage.addEventListener("mousedown", C.startDrag);
-    V.rootPage.addEventListener("mousemove", C.moveDrag);
-    V.rootPage.addEventListener("mouseup", C.endDrag);
-    V.rootPage.addEventListener("wheel", C.handleScroll);
+    V.rootPage.addEventListener("mousedown", V.startDrag);
+    V.rootPage.addEventListener("mousemove", V.moveDrag);
+    V.rootPage.addEventListener("mouseup", V.endDrag);
+    V.rootPage.addEventListener("wheel", V.handleScroll);
     
 
     EditionButtonView.init(V.rootPage);
@@ -292,8 +291,8 @@ V.attachEvents = function() {
       }
     });
     
-    V.svgTest.init(V.rootPage);
-    V.svgTest.setCallbacks({
+    V.svgComplet.init(V.rootPage);
+    V.svgComplet.setCallbacks({
       onFilterClick: function(filtreElement) {
         if (canvasState.isEditionMode) {
           let isInLink = filtreElement.closest('[id*="lien"]');

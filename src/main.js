@@ -30,6 +30,7 @@ router.addRoute("/svg-demo5", SvgDemo5Page);
 
 router.addRoute("/PageSvg", pageSvg);
 
+
 router.addRoute("*", The404Page);
 
 // Démarrer le routeur
