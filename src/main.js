@@ -2,6 +2,7 @@ import "./global.css";
 import { Router } from "./lib/router.js";
 import { RootLayout } from "./layouts/root/layout.js";
 import { The404Page } from "./pages/404/page.js";
+import { PageAccueil } from "./pages/PageAccueil/page.js";
 import { pageSvg } from "./pages/PageSvg/page.js";
 import { PageHistoriqueViz } from "./pages/PageHistoriqueViz/page.js";
 
@@ -10,7 +11,7 @@ import { PageHistoriqueViz } from "./pages/PageHistoriqueViz/page.js";
 const router = new Router("app");
 
 router.addLayout("/", RootLayout);
-router.addRoute("/", PageHistoriqueViz);
+router.addRoute("/", PageAccueil);
 router.addRoute("/PageSvg", pageSvg);
 router.addRoute("/historique", PageHistoriqueViz);
 

@@ -9,6 +9,7 @@
 @import "./ui/infoPanel/style.css";
 @import "./ui/viewPanel/style.css";
 @import "./ui/ligneModification/style.css";
+@import "./pages/PageAccueil/style.css";
 @import "./pages/PageHistoriqueViz/style.css";
 
 :root {
