@@ -5,16 +5,16 @@ import InfoPanelView from "@/ui/infoPanel/index.js";
 import ViewPanelView from "@/ui/viewPanel/index.js";
 import { htmlToDOM } from "@/lib/utils.js";
 import { Animation } from "../../lib/animation";
-import skillData from "@/data/skill.json";
 import { pn } from "@/data/export.js";
 import template from "./template.html?raw";
 
 
-//mettre dans le Mofel M
-let progressData = JSON.parse(localStorage.getItem('progressData')) || {};
-let tempProgressData = {};
 
-
+let M = {
+  progressData: JSON.parse(localStorage.getItem('progressData')) || {},
+  tempProgressData: {},
+  historiqueGlobal: JSON.parse(localStorage.getItem('historiqueData')) || { modifications: [] }
+};
 
 
 
@@ -66,25 +66,34 @@ C.getCompetenceFromFiltre = function(filtreElement) {
 // on ajoute un élément dans les changements temporaires
 C.saveLevelProgress = function(elementId, level) {
   if (elementId) {
-    tempProgressData[elementId] = level;
+    M.tempProgressData[elementId] = level;
     V.applyPreviewOpacity(elementId, level);
   }
 };
 
 //valider les changements et les enregistrer dans le localstorage
 C.validateChanges = function() {
-  for (let key in tempProgressData) {
-    progressData[key] = tempProgressData[key];
+  for (let key in M.tempProgressData) {
+    M.progressData[key] = M.tempProgressData[key];
+    
+    // Ajouter à l'historique global
+    M.historiqueGlobal.modifications.push({
+      acCode: key,
+      level: M.tempProgressData[key],
+      date: new Date().toLocaleDateString('fr-FR'),
+      timestamp: new Date().toISOString()
+    });
   }
-  localStorage.setItem('progressData', JSON.stringify(progressData));
-  tempProgressData = {};
+  localStorage.setItem('progressData', JSON.stringify(M.progressData));
+  localStorage.setItem('historiqueData', JSON.stringify(M.historiqueGlobal));
+  M.tempProgressData = {};
   V.applyFiltersOpacity();
 };
 
 //annuler les changements temporaire, 
 C.cancelChanges = function() {
-  progressData = JSON.parse(localStorage.getItem('progressData')) || {};
-  tempProgressData = {};
+  M.progressData = JSON.parse(localStorage.getItem('progressData')) || {};
+  M.tempProgressData = {};
   V.applyFiltersOpacity();
 };
 
@@ -103,7 +112,7 @@ C.fillPanelTemplate = function(title, description) {
     descElement.textContent = description;
   }
   
-  let savedLevel = progressData[canvasState.lastElementId] || 1;
+  let savedLevel = M.progressData[canvasState.lastElementId] || 1;
   V.infoPanel.selectValue(savedLevel);
 };
 
@@ -122,7 +131,7 @@ C.fillViewPanelTemplate = function(title, description) {
     descElement.textContent = description;
   }
 
-  const savedLevel = progressData[canvasState.lastElementId] || 1;
+  const savedLevel = M.progressData[canvasState.lastElementId] || 1;
   V.viewPanel.setLevel(savedLevel);
 };
 
@@ -166,15 +175,15 @@ V.applyPreviewOpacity = function(elementId, level) {
 };
 
 // opacité stocké dans le localstorage à partir de progressData 
-// /!\ demander si on met dans le C ou le V => on reste en V mais on met un paramétre (progressData) que 
-// l'on copie pour ne pas modifier directement /!\
-V.applyFiltersOpacity = function() {
-  for (let elementId in progressData) {
+// on reste en V mais on met un paramétre (progressData) que l'on copie pour ne pas modifier directement
+V.applyFiltersOpacity = function(progressData = M.progressData) {
+  const dataCopy = JSON.parse(JSON.stringify(progressData));
+  for (let elementId in dataCopy) {
     let competenceElement = canvasState.svg.querySelector(`[id="${elementId}"]`);
     if (competenceElement) {
       let filtreElements = competenceElement.querySelectorAll('[id*="filtre"]');
       filtreElements.forEach(filtreElement => {
-        let level = progressData[elementId] || 1;
+        let level = dataCopy[elementId] || 1;
         Animation.setFilterOpacity(filtreElement, level, 0);
       });
     }

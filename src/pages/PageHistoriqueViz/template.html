@@ -1,0 +1,20 @@
+<div class="page-historique-viz">
+  <div class="page-historique-viz__header">
+    <h1 class="page-historique-viz__title">Historique des modifications</h1>
+    <p class="page-historique-viz__subtitle">
+      Visualisez toutes vos modifications
+    </p>
+  </div>
+
+  <div class="page-historique-viz__container">
+    <div class="page-historique-viz__controls">
+      <select class="page-historique-viz__filter" id="acFilter">
+        <option value="">Tous les AC</option>
+      </select>
+    </div>
+
+    <div class="page-historique-viz__list">
+      <slot name="modifications"></slot>
+    </div>
+  </div>
+</div>

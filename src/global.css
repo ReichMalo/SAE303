@@ -1,18 +1,15 @@
 /* import des styles du ou des layouts */
 @import "./layouts/root/style.css";
 
-/* import des styles des pages */
-@import "./pages/svg-demo1/style.css";
-
 /* import des styles des composants UI */
 @import "./ui/header/style.css";
 @import "./ui/footer/style.css";
-@import "./ui/spinner/style.css";
-@import "./ui/star/style.css";
 @import "./ui/infoButton/style.css";
 @import "./ui/editionButton/style.css";
 @import "./ui/infoPanel/style.css";
 @import "./ui/viewPanel/style.css";
+@import "./ui/ligneModification/style.css";
+@import "./pages/PageHistoriqueViz/style.css";
 
 :root {
   /* Primitives Tokens */
